@@ -12,6 +12,8 @@
 
 A docker container for SDXL
 
+!["image"](./assets/images/image.png)
+
 Highlights:
 - **Reproducible**: everything runs inside a container (no local Python env needed).
 - **Simple**: one command to (optionally) caption images + train.
