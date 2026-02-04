@@ -40,7 +40,7 @@ docker compose build trainer
 # train
 docker compose run --rm trainer train \
 --base-model /models/base/sd_xl_base_1.0.safetensors \
---images /datasets/subject/images \
+--images /datasets/subject \
 --run-name title \
 --sdxl \
 --caption-mode blip \
@@ -59,7 +59,7 @@ If you want to generate `.txt` captions next to each image (same basename):
 # ## Caption only (BLIP)
 docker compose run 
 --rm trainer caption   
---images /datasets/subject/images   
+--images /datasets/subject   
 --prefix sksSubject   
 --overwrite
 ```
