@@ -43,7 +43,7 @@ ENV HF_HOME=/workspace/cache/hf \
 WORKDIR /workspace
 
 # Keep scripts in the image as a fallback. (Bind-mounts in compose will override them.)
-# COPY scripts/ /scripts/
-# RUN chmod -R a+rX /scripts && chmod +x /scripts/*.sh || true
+COPY scripts/ /scripts/
+RUN chmod -R a+rX /scripts && chmod +x /scripts/*.sh || true
 
 ENTRYPOINT ["/bin/bash", "/scripts/entrypoint.sh"]
