@@ -1,5 +1,5 @@
 # write required libraries.
-torch 
-torchvision 
-torchaudio 
+torch==2.10.0
+torchvision==0.25.0
+torchaudio==2.10.0
 xformers==0.0.34
