@@ -1,6 +1,12 @@
-# Few-shot LoRA Training System (Docker Compose)
+# sdxl_container
 
-A docker container for 
+# [SDXL Container](https://github.com/europanite/sdxl_container "SDXL Container")
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.10%20|%203.11|%203.12|%203.13-blue)](https://www.python.org/)
+![OS](https://img.shields.io/badge/OS-Linux%20%7C%20macOS%20%7C%20Windows-blue)
+
+A docker container for SDXL
 
 Highlights:
 - **Reproducible**: everything runs inside a container (no local Python env needed).
