@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TORCH_INDEX_URL="https://download.pytorch.org/whl/cu121"
+ARG SD_SCRIPTS_REPO="https://github.com/kohya-ss/sd-scripts.git"
+ARG SD_SCRIPTS_REF="main"
+ARG KOHYA_REPO="https://github.com/kohya-ss/kohya_ss.git"
+ARG KOHYA_REF="master"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ca-certificates curl wget \
+    python3 python3-pip python3-venv \
+    libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
+# PyTorch (CUDA)
+RUN python3 -m pip install --extra-index-url ${TORCH_INDEX_URL} \
+    torch torchvision torchaudio xformers==0.0.34
+
+# Clone + install training toolchain (with retry to avoid transient network errors / exit 128)
+RUN set -eux; \
+    retry() { n=0; until [ "$n" -ge 5 ]; do "$@" && break; n=$((n+1)); sleep $((2*n)); done; }; \
+    retry git clone --depth 1 --branch "${SD_SCRIPTS_REF}" "${SD_SCRIPTS_REPO}" /opt/sd-scripts; \
+    python3 -m pip install -e /opt/sd-scripts; \
+    if [ -f /opt/sd-scripts/requirements.txt ]; then \
+      (cd /opt/sd-scripts && python3 -m pip install --no-cache-dir -r requirements.txt); \
+    fi; \
+    retry git clone --depth 1 --branch "${KOHYA_REF}" "${KOHYA_REPO}" /opt/kohya_ss; \
+    if [ -f /opt/kohya_ss/requirements.txt ]; then \
+      sed -i '/\.\/sd-scripts/d' /opt/kohya_ss/requirements.txt || true; \
+      python3 -m pip install --no-cache-dir -r /opt/kohya_ss/requirements.txt; \
+    fi; \
+    python3 -m pip install --no-cache-dir accelerate transformers sentencepiece pillow diffusers safetensors huggingface_hub peft
+
+
+ENV HF_HOME=/workspace/cache/hf \
+    PIP_CACHE_DIR=/workspace/cache/pip \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /workspace
+
+# Keep scripts in the image as a fallback. (Bind-mounts in compose will override them.)
+COPY scripts/ /scripts/
+RUN chmod -R a+rX /scripts && chmod +x /scripts/*.sh || true
+
+ENTRYPOINT ["/bin/bash", "/scripts/entrypoint.sh"]

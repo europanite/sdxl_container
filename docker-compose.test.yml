@@ -1,0 +1,20 @@
+services:
+  service_test:
+    build:
+      context: ./service/
+      dockerfile: Dockerfile.test
+    environment:
+      - PYTHONPATH=/
+    ports:
+      - 8888:8888
+    user: "0:0"
+    tty: false
+    restart: no
+    image: local/service-test:ci
+    volumes:
+      - ./service/app:/app
+      - ./service/data:/data
+      - ./service/tests:/tests
+      - ./service/reports:/reports
+      - ./service/root/jupyter:/root/.jupyter
+    command: ["pytest", "-q"]

@@ -1,0 +1,38 @@
+name: Python Lint
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+permissions:
+  security-events: write
+jobs:
+  lint:
+    name: Python ${{ matrix.python-version }} • ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Install tools
+        run: |
+          python -m pip install -U pip
+          pip install -r service/requirements.test.txt
+      - name: Ruff (lint)
+        run: ruff check .
+      - name: Ruff SARIF
+        if: always()
+        run: ruff check --output-format sarif . > ruff.sarif || true
+      - name: Upload SARIF to Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ruff.sarif

@@ -1,0 +1,25 @@
+services:
+  trainer:
+    build:
+      context: .
+      dockerfile: service/Dockerfile
+      args:
+        SD_SCRIPTS_REPO: ${SD_SCRIPTS_REPO:-https://github.com/kohya-ss/sd-scripts.git}
+        SD_SCRIPTS_REF: ${SD_SCRIPTS_REF:-main}
+        KOHYA_REPO: ${KOHYA_REPO:-https://github.com/kohya-ss/kohya_ss.git}
+        KOHYA_REF: ${KOHYA_REF:-master}
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu121}
+    # Use bash to run the entrypoint so it works even if the file is not marked executable on the host.
+    entrypoint: ["/bin/bash", "/scripts/entrypoint.sh"]
+    volumes:
+      - ./workspace:/workspace
+      - ./scripts:/scripts
+      - ./models:/models
+      - ./datasets:/datasets
+    environment:
+      HF_HOME: /workspace/cache/hf
+      PIP_CACHE_DIR: /workspace/cache/pip
+      PYTHONUNBUFFERED: "1"
+    # If you have NVIDIA GPU + nvidia-container-toolkit:
+    gpus: all
+    shm_size: "8gb"
