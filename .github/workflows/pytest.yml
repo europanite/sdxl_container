@@ -40,9 +40,6 @@ jobs:
           set -eux
           python -m pip install -U pip
           pip install -r service/requirements.test.txt
-          if [ -f service/pyproject.toml ] || [ -f service/setup.cfg ] || [ -f service/setup.py ]; then
-            pip install -e service
-          fi
       - name: Install deps (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
@@ -53,11 +50,6 @@ jobs:
           $hasPythonProject = (Test-Path -Path 'service/pyproject.toml') -or
                             (Test-Path -Path 'service/setup.cfg') -or
                             (Test-Path -Path 'service/setup.py')
-          if ($hasPythonProject) {
-            python -m pip install -e service
-          } else {
-            Write-Host 'service packaging files not found; skipping'
-          }
       - name: Show versions
         shell: bash
         run: |
