@@ -17,7 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m pip install --upgrade pip setuptools wheel
 
 # PyTorch (CUDA)
-RUN python3 -m pip install --extra-index-url ${TORCH_INDEX_URL} 
+RUN python3 -m pip install --extra-index-url ${TORCH_INDEX_URL} \
+    torch torchvision torchaudio
+COPY service/requirements.txt requirements.txt
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Clone + install training toolchain (with retry to avoid transient network errors / exit 128)
