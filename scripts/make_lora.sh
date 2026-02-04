@@ -12,7 +12,7 @@ Required:
 
 Optional (common):
   --concept-token   e.g. sksSubject
-  --out-dir         default: /workspace/models/loras
+  --out-dir         default: /models/loras
   --caption-mode    none|blip (default: none)
   --sdxl            set SDXL-friendly defaults (1024px)
   --max-train-steps default: 1600
@@ -26,7 +26,7 @@ BASE_MODEL=""
 IMAGES_DIR=""
 RUN_NAME=""
 CONCEPT_TOKEN="sksSubject"
-OUT_DIR="/workspace/models/loras"
+OUT_DIR="/models/loras"
 CAPTION_MODE="none"
 SDXL="0"
 MAX_TRAIN_STEPS="1600"

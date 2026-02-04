@@ -8,7 +8,7 @@
 [![CodeQL Advanced](https://github.com/europanite/sdxl_container/actions/workflows/codeql.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/codeql.yml)
 [![Pytest](https://github.com/europanite/sdxl_container/actions/workflows/pytest.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pytest.yml)
 [![Python Lint](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml)
-[![pages-build-deployment](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment)
+[![pages](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment)
 
 A docker container for SDXL
 
@@ -40,7 +40,7 @@ docker compose build trainer
 # train
 docker compose run --rm trainer train \
 --base-model /models/base/sd_xl_base_1.0.safetensors \
---images /datasets/subject \
+--images /datasets/title \
 --run-name title \
 --sdxl \
 --caption-mode blip \
@@ -51,16 +51,16 @@ docker compose run --rm trainer train \
 --network-alpha 8
 ```
 
-## Caption only (BLIP)
+## Caption (BLIP)
 
 If you want to generate `.txt` captions next to each image (same basename):
 
 ```bash
-# ## Caption only (BLIP)
-docker compose run 
---rm trainer caption   
---images /datasets/subject   
---prefix sksSubject   
+# caption
+docker compose run  \
+--rm trainer caption  \  
+--images /datasets/subject \   
+--prefix sksSubject    \
 --overwrite
 ```
 
@@ -70,19 +70,19 @@ Generate images with the trained LoRA:
 
 ```bash
 # inference
-docker compose run 
---rm trainer infer   
---base-model /models/base/sd_xl_base_1.0.safetensors   
---lora /models/loras/subject_***.safetensors   
---prompt "sksSubject portrait photo"   
---negative-prompt ""   
---out-dir /work/outputs   
---num-images 4   
---steps 30   
---cfg 7.0   
---width 1024   
---height 1024   
---lora-scale 0.8   
+docker compose run  \
+--rm trainer infer    \
+--base-model /models/base/sd_xl_base_1.0.safetensors    \
+--lora /models/loras/title_20260204_123246.safetensors    \
+--prompt "sksSubject seaside"    \
+--negative-prompt ""    \
+--out-dir /datasets/title/inference    \
+--num-images 4    \
+--steps 30    \
+--cfg 7.0    \
+--width 1024    \
+--height 1024    \
+--lora-scale 0.8    \
 --seed 42
 ```
 ---
