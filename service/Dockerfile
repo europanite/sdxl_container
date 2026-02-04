@@ -20,7 +20,9 @@ RUN python3 -m pip install --upgrade pip setuptools wheel
 RUN python3 -m pip install --extra-index-url ${TORCH_INDEX_URL} \
     torch torchvision torchaudio
 
+COPY requirements.txt requirements.txt
 COPY requirements.test.txt requirements.test.txt
+
 RUN python3 -m pip install --no-cache-dir -r requirements.test.txt
 
 # Clone + install training toolchain (with retry to avoid transient network errors / exit 128)
