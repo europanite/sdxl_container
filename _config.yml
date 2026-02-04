@@ -1,6 +1,6 @@
-title: "sdxl_lora_container"
+title: "sdxl_container"
 description: "Python environment built with Docker Compose"
-baseurl: "/sdxl_lora_container"
+baseurl: "/sdxl_container"
 url: "https://europanite.github.io"
 theme: minima
 markdown: kramdown
