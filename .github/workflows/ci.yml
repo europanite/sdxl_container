@@ -59,7 +59,7 @@ jobs:
         run: mkdir -p service/reports/ci
       - name: Run service tests
         run: |
-          docker compose -f docker-compose.test.yml run --rm   --entrypoint /bin/sh service_test -lc '
+          docker compose -f docker-compose.test.yml run --rm   --entrypoint /bin/sh trainer_test -lc '
               python -m coverage run -m pytest
             '
       - name: Upload coverage xml

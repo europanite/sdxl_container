@@ -1,5 +1,5 @@
 services:
-  trainer:
+  trainer_test:
     build:
       context: .
       dockerfile: service/Dockerfile
