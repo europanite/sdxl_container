@@ -21,6 +21,4 @@ services:
       HF_HOME: /workspace/cache/hf
       PIP_CACHE_DIR: /workspace/cache/pip
       PYTHONUNBUFFERED: "1"
-    # If you have NVIDIA GPU + nvidia-container-toolkit:
-    gpus: all
-    shm_size: "8gb"
+
