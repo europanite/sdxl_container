@@ -61,17 +61,8 @@ jobs:
     needs: build-test-images
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
         with:
-          name: test-images
-      - name: show downloaded files
-        run: |
-          pwd
-          ls -lah
-          find . -maxdepth 3 -type f \( -name "service-test.tar.gz" -o -name "*.tar.gz" \) -print
-      - name: Load images
-        run: |
-          gunzip -c service-test.tar.gz | docker load
+          fetch-depth: 1
       - name: Prepare report dir on host (mounted into /reports)
         run: mkdir -p service/reports/ci
       - name: Run service tests
