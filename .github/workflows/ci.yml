@@ -32,11 +32,17 @@ jobs:
             service
       - name: Save images for downstream jobs
         run: |
-          docker save local/service-test:ci | gzip > service-test.tar.gz
+          set -euo pipefail
+          docker image inspect local/service-test:ci >/dev/null
+          docker save local/service-test:ci | gzip -c > service-test.tar.gz
+          ls -lh service-test.tar.gz
+          gzip -t service-test.tar.gz   # 壊れてたらここで落ちる
+
       - uses: actions/upload-artifact@v4
         with:
           name: test-images
           path: service-test.tar.gz
+          if-no-files-found: error
   service-tests:
     runs-on: ${{ matrix.os }}
     permissions:
@@ -52,6 +58,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: test-images
+      - name: show downloaded files
+        run: |
+          pwd
+          ls -lah
+          find . -maxdepth 3 -type f \( -name "service-test.tar.gz" -o -name "*.tar.gz" \) -print
       - name: Load images
         run: |
           gunzip -c service-test.tar.gz | docker load
@@ -59,8 +70,8 @@ jobs:
         run: mkdir -p service/reports/ci
       - name: Run service tests
         run: |
-          docker compose -f docker-compose.test.yml run --rm   --entrypoint /bin/sh trainer_test -lc '
-              python3 -m coverage run -m pytest 
+          docker compose -f docker-compose.test.yml run --rm --entrypoint /bin/sh trainer_test -lc '
+              python3 -m coverage run -m pytest
             '
       - name: Upload coverage xml
         uses: actions/upload-artifact@v4
