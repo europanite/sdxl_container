@@ -1,5 +1,7 @@
 import subprocess
 import sys
+from pathlib import Path
 
 def test_scripts_compile():
-    subprocess.run([sys.executable, "-m", "compileall", "scripts"], check=True)
+    target = "/scripts" if Path("/scripts").is_dir() else "scripts"
+    subprocess.run([sys.executable, "-m", "compileall", target], check=True)

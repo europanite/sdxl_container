@@ -8,74 +8,35 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
-  build-test-images:
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      actions: write
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build service TEST image 
-        env:
-          DOCKER_BUILDKIT: 1
-        run: |
-          docker build \
-            -f service/Dockerfile.test \
-            -t local/service-test:ci \
-            service
-      - name: Save images for downstream jobs
-        run: |
-          docker save local/service-test:ci | gzip > service-test.tar.gz
-      - uses: actions/upload-artifact@v4
-        with:
-          name: test-images
-          path: service-test.tar.gz
   service-tests:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       actions: write
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    needs: build-test-images
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
         with:
-          name: test-images
-      - name: Load images
-        run: |
-          gunzip -c service-test.tar.gz | docker load
+          fetch-depth: 1
+
       - name: Prepare report dir on host (mounted into /reports)
         run: mkdir -p service/reports/ci
+
       - name: Run service tests
         run: |
-          docker compose -f docker-compose.test.yml run --rm   --entrypoint /bin/sh trainer_test -lc '
-              python -m coverage run -m pytest
-            '
+          docker compose -f docker-compose.test.yml run --rm --entrypoint /bin/sh trainer_test -lc '
+            python3 -m coverage run -m pytest
+            python3 -m pytest
+          '
       - name: Upload coverage xml
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
-          path: service/reports/ci/coverage.xml
-          if-no-files-found: error
+           name: coverage-xml
+           path: service/reports/ci/coverage.xml
+           if-no-files-found: error
+
       - name: Cleanup
-        env:
-          DOCKER_BUILDKIT: 1
-          HOST_UID: "1000"
-          HOST_GID: "1000"
-          DISPLAY: ":1"
-          HOST_USERNAME: user
-          HOST_GROUPNAME: group
         if: always()
         run: |
-          docker compose  down -v --remove-orphans
+          docker compose down -v --remove-orphans

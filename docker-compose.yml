@@ -1,8 +1,8 @@
 services:
   trainer:
     build:
-      context: .
-      dockerfile: service/Dockerfile
+      context: ./service
+      dockerfile: Dockerfile
       args:
         SD_SCRIPTS_REPO: ${SD_SCRIPTS_REPO:-https://github.com/kohya-ss/sd-scripts.git}
         SD_SCRIPTS_REF: ${SD_SCRIPTS_REF:-main}
