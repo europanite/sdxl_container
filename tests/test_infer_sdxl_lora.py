@@ -1,9 +1,3 @@
-diff --git a/tests/test_infer_sdxl_lora.py b/tests/test_infer_sdxl_lora.py
-new file mode 100644
-index 0000000..d9c6f42
---- /dev/null
-++ b/tests/test_infer_sdxl_lora.py
-@@ -0,0 +1,243 @@
 from __future__ import annotations
 
 import importlib.util
