@@ -27,14 +27,14 @@ jobs:
         run: |
           docker compose -f docker-compose.test.yml run --rm --entrypoint /bin/sh trainer_test -lc '
             python3 -m coverage run -m pytest
+            python3 -m pytest
           '
-
       - name: Upload coverage xml
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
-          path: service/reports/ci/coverage.xml
-          if-no-files-found: error
+           name: coverage-xml
+           path: service/reports/ci/coverage.xml
+           if-no-files-found: error
 
       - name: Cleanup
         if: always()
