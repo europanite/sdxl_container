@@ -22,7 +22,7 @@ RUN python3 -m pip install --extra-index-url ${TORCH_INDEX_URL} \
 COPY requirements.txt requirements.txt
 COPY requirements.test.txt requirements.test.txt
 
-RUN python3 -m pip install --no-cache-dir -r requirements.test.txt
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Clone + install training toolchain (with retry to avoid transient network errors / exit 128)
 RUN set -eux; \
@@ -45,9 +45,5 @@ ENV HF_HOME=/workspace/cache/hf \
     PYTHONUNBUFFERED=1
 
 WORKDIR /workspace
-
-# Keep scripts in the image as a fallback. (Bind-mounts in compose will override them.)
-# COPY scripts/ /scripts/
-# RUN chmod -R a+rX /scripts && chmod +x /scripts/*.sh || true
 
 ENTRYPOINT ["/bin/bash", "/scripts/entrypoint.sh"]

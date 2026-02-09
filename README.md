@@ -10,22 +10,57 @@
 [![Python Lint](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml)
 [![pages](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment)
 
-A docker container for SDXL
 
 !["image"](./assets/images/image.png)
+
+A docker container to **train SDXL LoRA adapters** and **run SDXL inference**.
+
+This repo is optimized for “small image set” LoRA runs:
+1) drop images into a folder  
+2) (optionally) auto-generate captions  
+3) train a LoRA into `./models/loras/`  
+4) immediately generate images with that LoRA
+
+---
+
+## What’s inside
+
+- **GPU trainer container**
+- **Command entrypoint**: `train` / `caption` / `infer`
+- **LoRA training wrapper** 
+- **Training launcher wrapper**
+- **BLIP captioning tool**
+- **Diffusers inference script**
+- **CPU-only test container** for CI
+
+---
+
+## Architecture / Mounts
+
+`docker-compose.yml` mounts local folders into the container:
+
+- `./models`   → `/models`   (base models + output LoRAs)
+- `./datasets` → `/datasets` (your raw images)
+- `./workspace`→ `/workspace`(runs + caches + outputs)
+- `./scripts`  → `/scripts`  (entrypoint + wrappers)
+
+All commands run inside the container, but files are written to your host via these mounts.
+
+---
+
+## Prerequisites
+
+- Docker + Docker Compose
+- GPU + toolkit (for `gpus: all`)
+- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
+ - A small dataset under `./datasets/<subject>/images/`
+---
 
 Highlights:
 - **Reproducible**: everything runs inside a container (no local Python env needed).
 - **Simple**: one command to (optionally) caption images + train.
 - **Safe defaults** for few-shot SDXL LoRA.
 - **Includes inference**: SDXL txt2img with LoRA using `diffusers`.
-
----
-
-## Requirements
-
-- Docker + Docker Compose v2
-- A GPU-enabled Docker runtime is strongly recommended for training.
 
 ---
 
@@ -41,7 +76,7 @@ docker compose build trainer
 ```bash
 # train
 docker compose run --rm trainer train \
---base-model /models/base/sd_xl_base_1.0.safetensors \
+--base-model stabilityai/sdxl-turbo \
 --images /datasets/title \
 --run-name title \
 --sdxl \
@@ -53,6 +88,22 @@ docker compose run --rm trainer train \
 --network-alpha 8
 ```
 
+## Infer (txt2img)
+```bash
+docker compose run --rm trainer infer \
+--base-model stabilityai/sdxl-turbo \
+--lora /models/loras/title_***.safetensors \
+--prompt "portrait photo of sksTitle, high detail, natural light" \
+--negative-prompt "low quality, blurry, worst quality" \
+--out-dir /workspace/outputs \
+--num-images 4 \
+--seed 123 \
+--steps 30 \
+--cfg 7.0 \
+--lora-scale 0.8 \
+--width 1024 --height 1024
+```
+
 ## Caption (BLIP)
 
 If you want to generate `.txt` captions next to each image (same basename):
@@ -61,7 +112,7 @@ If you want to generate `.txt` captions next to each image (same basename):
 # caption
 docker compose run  \
 --rm trainer caption  \  
---images /datasets/subject \   
+--images /datasets/title \   
 --prefix sksSubject    \
 --overwrite
 ```
@@ -75,7 +126,7 @@ Generate images with the trained LoRA:
 docker compose run  \
 --rm trainer infer    \
 --base-model /models/base/sd_xl_base_1.0.safetensors    \
---lora /models/loras/title_20260204_123246.safetensors    \
+--lora /models/loras/title_***.safetensors    \
 --prompt "sksSubject seaside"    \
 --negative-prompt ""    \
 --out-dir /datasets/title/inference    \
@@ -88,6 +139,34 @@ docker compose run  \
 --seed 42
 ```
 ---
+
+## Test
+```bash
+docker compose -f docker-compose.test.yml build
+docker compose -f docker-compose.test.yml run --rm test
+```
+
+##  LoRA algorithm 
+
+LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
+
+For a weight matrix W, LoRA learns:
+
+ΔW = (α / r) * (B @ A)
+
+Where:
+
+r is the rank (--network-dim)
+
+α is the scaling factor (--network-alpha)
+
+A and B are the low-rank trainable matrices
+
+At inference time the effective weight becomes:
+
+W' = W + ΔW
+
+Additionally, this repo lets you control how strongly the LoRA influences generation via --lora-scale.
 
 ## License
 - Apache License 2.0

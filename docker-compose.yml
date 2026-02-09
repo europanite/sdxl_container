@@ -9,6 +9,8 @@ services:
         KOHYA_REPO: ${KOHYA_REPO:-https://github.com/kohya-ss/kohya_ss.git}
         KOHYA_REF: ${KOHYA_REF:-master}
         TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu121}
+        HF_HOME: /workspace/cache/hf
+        HF_TOKEN: ${HF_TOKEN:-}
     # Use bash to run the entrypoint so it works even if the file is not marked executable on the host.
     entrypoint: ["/bin/bash", "/scripts/entrypoint.sh"]
     volumes:
