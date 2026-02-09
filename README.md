@@ -52,8 +52,8 @@ All commands run inside the container, but files are written to your host via th
 
 - Docker + Docker Compose
 - GPU + toolkit (for `gpus: all`)
-- An SDXL base model you are allowed to use (e.g. `sd_xl_base_1.0.safetensors`)
-
+- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
+ - A small dataset under `./datasets/<subject>/images/`
 ---
 
 Highlights:
@@ -76,7 +76,7 @@ docker compose build trainer
 ```bash
 # train
 docker compose run --rm trainer train \
---base-model /models/base/sd_xl_base_1.0.safetensors \
+--base-model stabilityai/sdxl-turbo \
 --images /datasets/title \
 --run-name title \
 --sdxl \
@@ -91,8 +91,8 @@ docker compose run --rm trainer train \
 ## Infer (txt2img)
 ```bash
 docker compose run --rm trainer infer \
---base-model /models/base/sd_xl_base_1.0.safetensors \
---lora /models/loras/title_20260207_123456.safetensors \
+--base-model stabilityai/sdxl-turbo \
+--lora /models/loras/title_***.safetensors \
 --prompt "portrait photo of sksTitle, high detail, natural light" \
 --negative-prompt "low quality, blurry, worst quality" \
 --out-dir /workspace/outputs \
@@ -126,7 +126,7 @@ Generate images with the trained LoRA:
 docker compose run  \
 --rm trainer infer    \
 --base-model /models/base/sd_xl_base_1.0.safetensors    \
---lora /models/loras/title_20260204_123246.safetensors    \
+--lora /models/loras/title_***.safetensors    \
 --prompt "sksSubject seaside"    \
 --negative-prompt ""    \
 --out-dir /datasets/title/inference    \
@@ -146,8 +146,7 @@ docker compose -f docker-compose.test.yml build
 docker compose -f docker-compose.test.yml run --rm test
 ```
 
-
-LoRA algorithm (what is being learned)
+##  LoRA algorithm 
 
 LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
 
