@@ -3,8 +3,6 @@ on:
   push:
   workflow_dispatch:
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
 permissions:
   security-events: write
 jobs:
