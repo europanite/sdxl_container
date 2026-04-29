@@ -1,3 +1,7 @@
+[English](README.md) | [हिन्दी](README.hi.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
+
+> **Hinweis:** Dies ist eine übersetzte Version von `README.md`. Das englische README ist die maßgebliche Quelle.
+
 # [SDXL Container](https://github.com/europanite/sdxl_container "SDXL Container")
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -11,28 +15,15 @@
 [![pages](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment)
 
 
-<p align="right">
-  <a href="./README.md">🇺🇸 English</a> |
-  <a href="./README.hi.md">🇮🇳 हिंदी</a> |
-  <a href="./README.ja.md">🇯🇵 日本語</a> |
-  <a href="./README.zh-CN.md">🇨🇳 简体中文</a> |
-  <a href="./README.es.md">🇪🇸 Español</a> |
-  <a href="./README.pt-BR.md">🇧🇷 Português (Brasil)</a> |
-  <a href="./README.ko.md">🇰🇷 한국어</a> |
-  <a href="./README.de.md">🇩🇪 Deutsch</a> |
-  <a href="./README.fr.md">🇫🇷 Français</a>
-</p>
-
-
 !["image"](./assets/images/image.png)
 
-A docker container to **train SDXL LoRA adapters** and **run SDXL inference**.
+Ein docker container, um **SDXL LoRA adapters zu trainieren** und **SDXL inference auszuführen**.
 
-This repo is optimized for “small image set” LoRA runs:
-1) drop images into a folder  
-2) (optionally) auto-generate captions  
-3) train a LoRA into `./models/loras/`  
-4) immediately generate images with that LoRA
+Dieses repo ist für LoRA runs mit “small image set” optimiert:
+1) images in einen folder legen  
+2) (optional) captions auto-generate  
+3) ein LoRA nach `./models/loras/` trainieren  
+4) sofort images mit diesem LoRA generate
 
 ---
 
@@ -44,36 +35,36 @@ This repo is optimized for “small image set” LoRA runs:
 - **Training launcher wrapper**
 - **BLIP captioning tool**
 - **Diffusers inference script**
-- **CPU-only test container** for CI
+- **CPU-only test container** für CI
 
 ---
 
 ## Architecture / Mounts
 
-`docker-compose.yml` mounts local folders into the container:
+`docker-compose.yml` mountet local folders in den container:
 
 - `./models`   → `/models`   (base models + output LoRAs)
 - `./datasets` → `/datasets` (your raw images)
 - `./workspace`→ `/workspace`(runs + caches + outputs)
 - `./scripts`  → `/scripts`  (entrypoint + wrappers)
 
-All commands run inside the container, but files are written to your host via these mounts.
+Alle commands laufen im container, aber files werden über diese mounts auf deinen host geschrieben.
 
 ---
 
 ## Prerequisites
 
 - Docker + Docker Compose
-- GPU + toolkit (for `gpus: all`)
-- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
- - A small dataset under `./datasets/<subject>/images/`
+- GPU + toolkit (für `gpus: all`)
+- Ein SDXL base model als entweder: (a) local `.safetensors`/diffusers dir unter `./models/base/`, oder (b) eine Hugging Face repo id (z. B. `stabilityai/sdxl-turbo`)
+ - Ein small dataset unter `./datasets/<subject>/images/`
 ---
 
 Highlights:
-- **Reproducible**: everything runs inside a container (no local Python env needed).
-- **Simple**: one command to (optionally) caption images + train.
-- **Safe defaults** for few-shot SDXL LoRA.
-- **Includes inference**: SDXL txt2img with LoRA using `diffusers`.
+- **Reproducible**: alles läuft in einem container (keine local Python env erforderlich).
+- **Simple**: ein command, um images (optional) zu caption + zu trainieren.
+- **Safe defaults** für few-shot SDXL LoRA.
+- **Includes inference**: SDXL txt2img mit LoRA über `diffusers`.
 
 ---
 
@@ -119,7 +110,7 @@ docker compose run --rm trainer infer \
 
 ## Caption (BLIP)
 
-If you want to generate `.txt` captions next to each image (same basename):
+Wenn du `.txt` captions neben jeder image mit demselben basename generate möchtest:
 
 ```bash
 # caption
@@ -132,7 +123,7 @@ docker compose run  \
 
 ## Inference (SDXL txt2img with LoRA)
 
-Generate images with the trained LoRA:
+Generate images mit dem trained LoRA:
 
 ```bash
 # inference
@@ -161,25 +152,25 @@ docker compose -f docker-compose.test.yml run --rm test
 
 ##  LoRA algorithm 
 
-LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
+LoRA (Low-Rank Adaptation) fine-tunes ein diffusion model, indem es einen low-rank update zu ausgewählten weight matrices hinzufügt, während die base weights frozen bleiben.
 
-For a weight matrix W, LoRA learns:
+Für eine weight matrix W lernt LoRA:
 
 ΔW = (α / r) * (B @ A)
 
-Where:
+Dabei gilt:
 
-r is the rank (--network-dim)
+r ist der rank (--network-dim)
 
-α is the scaling factor (--network-alpha)
+α ist der scaling factor (--network-alpha)
 
-A and B are the low-rank trainable matrices
+A und B sind die low-rank trainable matrices
 
-At inference time the effective weight becomes:
+Zur inference time wird das effective weight zu:
 
 W' = W + ΔW
 
-Additionally, this repo lets you control how strongly the LoRA influences generation via --lora-scale.
+Zusätzlich kannst du in diesem repo über --lora-scale steuern, wie stark das LoRA die generation beeinflusst.
 
 ## License
 - Apache License 2.0

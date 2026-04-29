@@ -26,17 +26,17 @@
 
 !["image"](./assets/images/image.png)
 
-A docker container to **train SDXL LoRA adapters** and **run SDXL inference**.
+**SDXL LoRA adapters को train करने** और **SDXL inference चलाने** के लिए एक docker container।
 
-This repo is optimized for “small image set” LoRA runs:
-1) drop images into a folder  
-2) (optionally) auto-generate captions  
-3) train a LoRA into `./models/loras/`  
-4) immediately generate images with that LoRA
+यह repo “small image set” LoRA runs के लिए अनुकूलित है:
+1) images को एक folder में डालें  
+2) (वैकल्पिक रूप से) captions auto-generate करें  
+3) LoRA को `./models/loras/` में train करें  
+4) उसी LoRA से तुरंत images generate करें
 
 ---
 
-## What’s inside
+## अंदर क्या है
 
 - **GPU trainer container**
 - **Command entrypoint**: `train` / `caption` / `infer`
@@ -44,36 +44,36 @@ This repo is optimized for “small image set” LoRA runs:
 - **Training launcher wrapper**
 - **BLIP captioning tool**
 - **Diffusers inference script**
-- **CPU-only test container** for CI
+- **CI के लिए CPU-only test container**
 
 ---
 
 ## Architecture / Mounts
 
-`docker-compose.yml` mounts local folders into the container:
+`docker-compose.yml` local folders को container में mount करता है:
 
 - `./models`   → `/models`   (base models + output LoRAs)
-- `./datasets` → `/datasets` (your raw images)
+- `./datasets` → `/datasets` (आपकी raw images)
 - `./workspace`→ `/workspace`(runs + caches + outputs)
 - `./scripts`  → `/scripts`  (entrypoint + wrappers)
 
-All commands run inside the container, but files are written to your host via these mounts.
+सभी commands container के अंदर चलते हैं, लेकिन files इन mounts के माध्यम से आपके host पर लिखी जाती हैं।
 
 ---
 
 ## Prerequisites
 
 - Docker + Docker Compose
-- GPU + toolkit (for `gpus: all`)
-- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
- - A small dataset under `./datasets/<subject>/images/`
+- GPU + toolkit (`gpus: all` के लिए)
+- SDXL base model इनमें से किसी एक रूप में: (a) `./models/base/` के अंदर local `.safetensors`/diffusers dir, या (b) Hugging Face repo id (जैसे, `stabilityai/sdxl-turbo`)
+ - `./datasets/<subject>/images/` के अंदर एक small dataset
 ---
 
 Highlights:
-- **Reproducible**: everything runs inside a container (no local Python env needed).
-- **Simple**: one command to (optionally) caption images + train.
-- **Safe defaults** for few-shot SDXL LoRA.
-- **Includes inference**: SDXL txt2img with LoRA using `diffusers`.
+- **Reproducible**: सब कुछ container के अंदर चलता है (local Python env की आवश्यकता नहीं)।
+- **Simple**: images को (वैकल्पिक रूप से) caption करने + train करने के लिए एक command।
+- **Safe defaults** few-shot SDXL LoRA के लिए।
+- **Includes inference**: `diffusers` का उपयोग करके LoRA के साथ SDXL txt2img।
 
 ---
 
@@ -119,7 +119,7 @@ docker compose run --rm trainer infer \
 
 ## Caption (BLIP)
 
-If you want to generate `.txt` captions next to each image (same basename):
+यदि आप हर image के पास उसी basename वाली `.txt` captions generate करना चाहते हैं:
 
 ```bash
 # caption
@@ -132,7 +132,7 @@ docker compose run  \
 
 ## Inference (SDXL txt2img with LoRA)
 
-Generate images with the trained LoRA:
+Trained LoRA के साथ images generate करें:
 
 ```bash
 # inference
@@ -161,25 +161,25 @@ docker compose -f docker-compose.test.yml run --rm test
 
 ##  LoRA algorithm 
 
-LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
+LoRA (Low-Rank Adaptation) base weights को frozen रखते हुए selected weight matrices में low-rank update जोड़कर diffusion model को fine-tune करता है।
 
-For a weight matrix W, LoRA learns:
+किसी weight matrix W के लिए, LoRA यह सीखता है:
 
 ΔW = (α / r) * (B @ A)
 
-Where:
+जहाँ:
 
-r is the rank (--network-dim)
+r rank है (--network-dim)
 
-α is the scaling factor (--network-alpha)
+α scaling factor है (--network-alpha)
 
-A and B are the low-rank trainable matrices
+A और B low-rank trainable matrices हैं
 
-At inference time the effective weight becomes:
+Inference time पर effective weight यह बन जाता है:
 
 W' = W + ΔW
 
-Additionally, this repo lets you control how strongly the LoRA influences generation via --lora-scale.
+इसके अतिरिक्त, यह repo आपको --lora-scale के माध्यम से यह नियंत्रित करने देता है कि LoRA generation को कितनी मजबूती से प्रभावित करे।
 
 ## License
 - Apache License 2.0
