@@ -26,13 +26,13 @@
 
 !["image"](./assets/images/image.png)
 
-A docker container to **train SDXL LoRA adapters** and **run SDXL inference**.
+用于**训练 SDXL LoRA adapters**并**运行 SDXL inference**的 docker container。
 
-This repo is optimized for “small image set” LoRA runs:
-1) drop images into a folder  
-2) (optionally) auto-generate captions  
-3) train a LoRA into `./models/loras/`  
-4) immediately generate images with that LoRA
+此 repo 针对 “small image set” LoRA runs 进行了优化:
+1) 将 images 放入一个 folder  
+2) （可选）auto-generate captions  
+3) 将 LoRA train 到 `./models/loras/`  
+4) 立即使用该 LoRA generate images
 
 ---
 
@@ -44,36 +44,36 @@ This repo is optimized for “small image set” LoRA runs:
 - **Training launcher wrapper**
 - **BLIP captioning tool**
 - **Diffusers inference script**
-- **CPU-only test container** for CI
+- **用于 CI 的 CPU-only test container**
 
 ---
 
 ## Architecture / Mounts
 
-`docker-compose.yml` mounts local folders into the container:
+`docker-compose.yml` 将 local folders mount 到 container 中:
 
 - `./models`   → `/models`   (base models + output LoRAs)
 - `./datasets` → `/datasets` (your raw images)
 - `./workspace`→ `/workspace`(runs + caches + outputs)
 - `./scripts`  → `/scripts`  (entrypoint + wrappers)
 
-All commands run inside the container, but files are written to your host via these mounts.
+所有 commands 都在 container 内运行，但 files 会通过这些 mounts 写入到你的 host。
 
 ---
 
 ## Prerequisites
 
 - Docker + Docker Compose
-- GPU + toolkit (for `gpus: all`)
-- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
- - A small dataset under `./datasets/<subject>/images/`
+- GPU + toolkit（用于 `gpus: all`）
+- SDXL base model，形式为以下之一: (a) `./models/base/` 下的 local `.safetensors`/diffusers dir，或 (b) Hugging Face repo id（例如 `stabilityai/sdxl-turbo`）
+ - `./datasets/<subject>/images/` 下的 small dataset
 ---
 
 Highlights:
-- **Reproducible**: everything runs inside a container (no local Python env needed).
-- **Simple**: one command to (optionally) caption images + train.
-- **Safe defaults** for few-shot SDXL LoRA.
-- **Includes inference**: SDXL txt2img with LoRA using `diffusers`.
+- **Reproducible**: 一切都在 container 内运行（不需要 local Python env）。
+- **Simple**: 用一条 command 完成（可选的）image caption 生成 + train。
+- **Safe defaults** for few-shot SDXL LoRA。
+- **Includes inference**: 使用 `diffusers` 通过 LoRA 进行 SDXL txt2img。
 
 ---
 
@@ -119,7 +119,7 @@ docker compose run --rm trainer infer \
 
 ## Caption (BLIP)
 
-If you want to generate `.txt` captions next to each image (same basename):
+如果你想在每张 image 旁生成同 basename 的 `.txt` captions:
 
 ```bash
 # caption
@@ -132,7 +132,7 @@ docker compose run  \
 
 ## Inference (SDXL txt2img with LoRA)
 
-Generate images with the trained LoRA:
+使用 trained LoRA generate images:
 
 ```bash
 # inference
@@ -161,25 +161,25 @@ docker compose -f docker-compose.test.yml run --rm test
 
 ##  LoRA algorithm 
 
-LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
+LoRA (Low-Rank Adaptation) 通过向选定的 weight matrices 添加 low-rank update，同时保持 base weights frozen，来 fine-tune diffusion model。
 
-For a weight matrix W, LoRA learns:
+对于 weight matrix W，LoRA 学习:
 
 ΔW = (α / r) * (B @ A)
 
-Where:
+其中:
 
-r is the rank (--network-dim)
+r 是 rank (--network-dim)
 
-α is the scaling factor (--network-alpha)
+α 是 scaling factor (--network-alpha)
 
-A and B are the low-rank trainable matrices
+A 和 B 是 low-rank trainable matrices
 
-At inference time the effective weight becomes:
+在 inference time，effective weight 变为:
 
 W' = W + ΔW
 
-Additionally, this repo lets you control how strongly the LoRA influences generation via --lora-scale.
+此外，此 repo 允许你通过 --lora-scale 控制 LoRA 对 generation 的影响强度。
 
 ## License
 - Apache License 2.0

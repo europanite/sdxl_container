@@ -26,13 +26,13 @@
 
 !["image"](./assets/images/image.png)
 
-A docker container to **train SDXL LoRA adapters** and **run SDXL inference**.
+Um docker container para **train SDXL LoRA adapters** e **run SDXL inference**.
 
-This repo is optimized for “small image set” LoRA runs:
-1) drop images into a folder  
-2) (optionally) auto-generate captions  
-3) train a LoRA into `./models/loras/`  
-4) immediately generate images with that LoRA
+Este repo é otimizado para LoRA runs com “small image set”:
+1) coloque images em um folder  
+2) (opcionalmente) auto-generate captions  
+3) train um LoRA em `./models/loras/`  
+4) generate images imediatamente com esse LoRA
 
 ---
 
@@ -44,36 +44,36 @@ This repo is optimized for “small image set” LoRA runs:
 - **Training launcher wrapper**
 - **BLIP captioning tool**
 - **Diffusers inference script**
-- **CPU-only test container** for CI
+- **CPU-only test container** para CI
 
 ---
 
 ## Architecture / Mounts
 
-`docker-compose.yml` mounts local folders into the container:
+`docker-compose.yml` monta local folders dentro do container:
 
 - `./models`   → `/models`   (base models + output LoRAs)
 - `./datasets` → `/datasets` (your raw images)
 - `./workspace`→ `/workspace`(runs + caches + outputs)
 - `./scripts`  → `/scripts`  (entrypoint + wrappers)
 
-All commands run inside the container, but files are written to your host via these mounts.
+Todos os commands rodam dentro do container, mas os files são gravados no seu host por meio desses mounts.
 
 ---
 
 ## Prerequisites
 
 - Docker + Docker Compose
-- GPU + toolkit (for `gpus: all`)
-- An SDXL base model as either: (a) local `.safetensors`/diffusers dir under `./models/base/`, or (b) a Hugging Face repo id (e.g., `stabilityai/sdxl-turbo`)
- - A small dataset under `./datasets/<subject>/images/`
+- GPU + toolkit (para `gpus: all`)
+- Um SDXL base model como uma das opções: (a) local `.safetensors`/diffusers dir em `./models/base/`, ou (b) um Hugging Face repo id (por exemplo, `stabilityai/sdxl-turbo`)
+ - Um small dataset em `./datasets/<subject>/images/`
 ---
 
 Highlights:
-- **Reproducible**: everything runs inside a container (no local Python env needed).
-- **Simple**: one command to (optionally) caption images + train.
-- **Safe defaults** for few-shot SDXL LoRA.
-- **Includes inference**: SDXL txt2img with LoRA using `diffusers`.
+- **Reproducible**: tudo roda dentro de um container (não é necessário local Python env).
+- **Simple**: um command para (opcionalmente) caption images + train.
+- **Safe defaults** para few-shot SDXL LoRA.
+- **Includes inference**: SDXL txt2img com LoRA usando `diffusers`.
 
 ---
 
@@ -119,7 +119,7 @@ docker compose run --rm trainer infer \
 
 ## Caption (BLIP)
 
-If you want to generate `.txt` captions next to each image (same basename):
+Se você quiser generate `.txt` captions ao lado de cada image (mesmo basename):
 
 ```bash
 # caption
@@ -132,7 +132,7 @@ docker compose run  \
 
 ## Inference (SDXL txt2img with LoRA)
 
-Generate images with the trained LoRA:
+Generate images com o trained LoRA:
 
 ```bash
 # inference
@@ -161,25 +161,25 @@ docker compose -f docker-compose.test.yml run --rm test
 
 ##  LoRA algorithm 
 
-LoRA (Low-Rank Adaptation) fine-tunes a diffusion model by adding a low-rank update to selected weight matrices while keeping the base weights frozen.
+LoRA (Low-Rank Adaptation) fine-tunes um diffusion model adicionando um low-rank update a weight matrices selecionadas enquanto mantém os base weights frozen.
 
-For a weight matrix W, LoRA learns:
+Para uma weight matrix W, LoRA aprende:
 
 ΔW = (α / r) * (B @ A)
 
-Where:
+Onde:
 
-r is the rank (--network-dim)
+r é o rank (--network-dim)
 
-α is the scaling factor (--network-alpha)
+α é o scaling factor (--network-alpha)
 
-A and B are the low-rank trainable matrices
+A e B são as low-rank trainable matrices
 
-At inference time the effective weight becomes:
+Em inference time, o effective weight se torna:
 
 W' = W + ΔW
 
-Additionally, this repo lets you control how strongly the LoRA influences generation via --lora-scale.
+Além disso, este repo permite controlar a força com que o LoRA influencia a generation via --lora-scale.
 
 ## License
 - Apache License 2.0
