@@ -1,8 +1,9 @@
-[English](README.md) | [हिन्दी](README.hi.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
-
-> **Hinweis:** Dies ist eine übersetzte Version von `README.md`. Das englische README ist die maßgebliche Quelle.
-
-# [SDXL Container](https://github.com/europanite/sdxl_container "SDXL Container")
+---
+layout: page
+title: "🇩🇪 Deutsch"
+permalink: /de/
+lang: de
+---
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.10%20|%203.11|%203.12|%203.13-blue)](https://www.python.org/)
@@ -13,6 +14,19 @@
 [![Pytest](https://github.com/europanite/sdxl_container/actions/workflows/pytest.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pytest.yml)
 [![Python Lint](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/lint.yml)
 [![pages](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/europanite/sdxl_container/actions/workflows/pages/pages-build-deployment)
+
+
+<p align="right">
+  <a href="https://europanite.github.io/sdxl_container/">🇺🇸 English</a> |
+  <a href="https://europanite.github.io/sdxl_container/hi/">🇮🇳 हिंदी</a> |
+  <a href="https://europanite.github.io/sdxl_container/ja/">🇯🇵 日本語</a> |
+  <a href="https://europanite.github.io/sdxl_container/zh-CN/">🇨🇳 简体中文</a> |
+  <a href="https://europanite.github.io/sdxl_container/es/">🇪🇸 Español</a> |
+  <a href="https://europanite.github.io/sdxl_container/pt-BR/">🇧🇷 Português (Brasil)</a> |
+  <a href="https://europanite.github.io/sdxl_container/ko/">🇰🇷 한국어</a> |
+  <a href="https://europanite.github.io/sdxl_container/de/">🇩🇪 Deutsch</a> |
+  <a href="https://europanite.github.io/sdxl_container/fr/">🇫🇷 Français</a>
+</p>
 
 
 !["image"](./assets/images/image.png)

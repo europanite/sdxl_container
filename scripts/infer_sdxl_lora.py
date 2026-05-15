@@ -11,7 +11,7 @@ import torch
 
 def build_argparser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="SDXL txt2img inference with LoRA (diffusers).")
-    p.add_argument("--base-model", required=True, help="Base SDXL: dir or .safetensors")
+    p.add_argument("--base-model", required=True, help="Base SDXL: HF repo id (e.g. stabilityai/sdxl-turbo), diffusers dir, or .safetensors")
     p.add_argument("--lora", required=True, help="LoRA weights: .safetensors")
     p.add_argument("--prompt", required=True)
     p.add_argument("--negative-prompt", default="")
@@ -29,16 +29,27 @@ def build_argparser() -> argparse.ArgumentParser:
     return p
 
 
+def _looks_like_path(s: str) -> bool:
+    return s.startswith(("/", "./", "../")) or s.endswith((".safetensors", ".ckpt"))
+
+
 def load_pipe(base_model: str, device: str, dtype: torch.dtype):
     from diffusers import StableDiffusionXLPipeline  # type: ignore
 
     bm = Path(base_model)
-    if bm.is_dir():
-        pipe = StableDiffusionXLPipeline.from_pretrained(str(bm), torch_dtype=dtype, use_safetensors=True)
+    if bm.exists():
+        if bm.is_dir():
+            pipe = StableDiffusionXLPipeline.from_pretrained(str(bm), torch_dtype=dtype, use_safetensors=True)
+        else:
+            if not hasattr(StableDiffusionXLPipeline, "from_single_file"):
+                raise SystemExit("diffusers does not support from_single_file. Pass a diffusers-format directory to --base-model.")
+            pipe = StableDiffusionXLPipeline.from_single_file(str(bm), torch_dtype=dtype)
     else:
-        if not hasattr(StableDiffusionXLPipeline, "from_single_file"):
-            raise SystemExit("diffusers does not support from_single_file. Pass a diffusers-format directory to --base-model.")
-        pipe = StableDiffusionXLPipeline.from_single_file(str(bm), torch_dtype=dtype)
+        # If it *looks* like a path but doesn't exist, fail fast (typo protection).
+        if _looks_like_path(base_model):
+            raise SystemExit(f"Base model path not found: {base_model}")
+        # Treat as Hugging Face repo id (e.g. stabilityai/sdxl-turbo).
+        pipe = StableDiffusionXLPipeline.from_pretrained(base_model, torch_dtype=dtype, use_safetensors=True)
 
     if device.startswith("cuda"):
         pipe.to(device)

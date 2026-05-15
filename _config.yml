@@ -1,5 +1,5 @@
 title: "sdxl_container"
-description: "Python environment built with Docker Compose"
+description: "A docker container to train SDXL LoRA adapters and run SDXL inference"
 baseurl: "/sdxl_container"
 url: "https://europanite.github.io"
 theme: minima
@@ -8,3 +8,21 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
 highlighter: rouge
+
+header_pages:
+  - README.md
+  - README.hi.md
+  - README.ja.md
+  - README.zh-CN.md
+  - README.es.md
+  - README.pt-BR.md
+  - README.ko.md
+  - README.de.md
+  - README.fr.md
+
+exclude:
+  - service/reports/
+  - .ruff_cache/
+  - workspace/
+  - models/
+  - datasets/
