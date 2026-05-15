@@ -6,9 +6,9 @@ usage() {
 make_lora.sh - Train a LoRA from a small set of images.
 
 Required:
-  --base-model  /models/base/<model>.safetensors
+  --base-model  /models/base/<model>.safetensors | /models/base/<diffusers_dir> | <hf_repo_id> (e.g. stabilityai/sdxl-turbo)
   --images      /datasets/<subject>/images
-  --run-name    e.g. my_subject
+   --run-name    e.g. my_subject
 
 Optional (common):
   --concept-token   e.g. sksSubject
@@ -58,9 +58,17 @@ if [[ -z "$BASE_MODEL" || -z "$IMAGES_DIR" || -z "$RUN_NAME" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$BASE_MODEL" ]]; then
-  echo "Base model not found: $BASE_MODEL"
-  exit 1
+is_pathlike() {
+  local s="$1"
+  [[ "$s" == /* || "$s" == ./* || "$s" == ../* || "$s" == *.safetensors || "$s" == *.ckpt ]]
+}
+
+# Allow HF repo id (e.g. stabilityai/sdxl-turbo). Only enforce existence checks for path-like inputs.
+if is_pathlike "$BASE_MODEL"; then
+  if [[ ! -e "$BASE_MODEL" ]]; then
+    echo "Base model path not found: $BASE_MODEL"
+    exit 1
+  fi
 fi
 
 if [[ ! -d "$IMAGES_DIR" ]]; then

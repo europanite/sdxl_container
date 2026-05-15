@@ -1,3 +1,10 @@
+---
+layout: page
+title: "🇧🇷 Português (Brasil)"
+permalink: /pt-BR/
+lang: pt-BR
+---
+
 # [SDXL Container](https://github.com/europanite/sdxl_container "SDXL Container")
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -12,15 +19,15 @@
 
 
 <p align="right">
-  <a href="./README.md">🇺🇸 English</a> |
-  <a href="./README.hi.md">🇮🇳 हिंदी</a> |
-  <a href="./README.ja.md">🇯🇵 日本語</a> |
-  <a href="./README.zh-CN.md">🇨🇳 简体中文</a> |
-  <a href="./README.es.md">🇪🇸 Español</a> |
-  <a href="./README.pt-BR.md">🇧🇷 Português (Brasil)</a> |
-  <a href="./README.ko.md">🇰🇷 한국어</a> |
-  <a href="./README.de.md">🇩🇪 Deutsch</a> |
-  <a href="./README.fr.md">🇫🇷 Français</a>
+  <a href="https://europanite.github.io/sdxl_container/">🇺🇸 English</a> |
+  <a href="https://europanite.github.io/sdxl_container/hi/">🇮🇳 हिंदी</a> |
+  <a href="https://europanite.github.io/sdxl_container/ja/">🇯🇵 日本語</a> |
+  <a href="https://europanite.github.io/sdxl_container/zh-CN/">🇨🇳 简体中文</a> |
+  <a href="https://europanite.github.io/sdxl_container/es/">🇪🇸 Español</a> |
+  <a href="https://europanite.github.io/sdxl_container/pt-BR/">🇧🇷 Português (Brasil)</a> |
+  <a href="https://europanite.github.io/sdxl_container/ko/">🇰🇷 한국어</a> |
+  <a href="https://europanite.github.io/sdxl_container/de/">🇩🇪 Deutsch</a> |
+  <a href="https://europanite.github.io/sdxl_container/fr/">🇫🇷 Français</a>
 </p>
 
 
