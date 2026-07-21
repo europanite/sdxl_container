@@ -1,2 +1,2 @@
 # write required libraries.
-xformers==0.0.34
+xformers==0.0.35

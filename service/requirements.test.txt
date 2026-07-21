@@ -1,4 +1,4 @@
 # write required libraries.
-pytest==8.4.2
-pytest-cov==7.0.0
-ruff==0.14.8
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.15.22
